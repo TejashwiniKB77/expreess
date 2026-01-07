@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+
 import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
@@ -27,4 +28,6 @@ app.use(errorHandler);
 
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");
+  console.log("EMAIL USER:", process.env.EMAIL_USER);
+
 });

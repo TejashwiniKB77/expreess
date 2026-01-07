@@ -2,9 +2,11 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { sendEmail } from "../utils/emailService.js";
 
 const router = express.Router();
 
+/* SIGNUP */
 /* SIGNUP */
 router.post("/signup", async (req, res, next) => {
   try {
@@ -23,11 +25,29 @@ router.post("/signup", async (req, res, next) => {
       throw error;
     }
 
-    // normal logic...
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword
+    });
+
+    await user.save();
+
+    // ✅ SEND EMAIL AFTER SUCCESSFUL SIGNUP
+    await sendEmail(
+      email,
+      "Registration Successful",
+      `Hello ${name},\n\nYour registration was successful.\n\nThank you!`
+    );
+
+    
+
     res.status(201).json({ message: "Signup successful" });
 
   } catch (err) {
-    next(err); // 🔥 SEND TO GLOBAL HANDLER
+    next(err);
   }
 });
 
